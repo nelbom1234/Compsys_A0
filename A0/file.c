@@ -37,12 +37,18 @@ enum file_type fileType(FILE *f) {
                 first_char = ASCII;
                 continue;
         }
-            else
-                return DATA;
+        else if(first_char == ISO_8859_1 || first_char == UTF8) {
+            continue;
+        }
+        else
+            return DATA;
         }
         else if(c >= 160){
             if (first_char == ISO_8859_1 || first_char == UNDEFINED || first_char == ASCII) {
                 first_char = ISO_8859_1;
+                continue;
+            }
+            else if (first_char == UTF8) {
                 continue;
             }
             else
@@ -51,6 +57,9 @@ enum file_type fileType(FILE *f) {
         else if((c & 0x80) == 0x0) {
             if (first_char == UTF8 || first_char == UNDEFINED || first_char == ISO_8859_1 || first_char == ASCII) {
                 first_char = UTF8;
+                continue;
+            }
+            else if (first_char == UTF8) {
                 continue;
             }
             else
@@ -62,6 +71,9 @@ enum file_type fileType(FILE *f) {
             if((byte & 0xc0) == 0x80) {
                 if (first_char == UTF8 || first_char == UNDEFINED || first_char == ISO_8859_1 || first_char == ASCII) {
                 first_char = UTF8;
+                continue;
+            }
+            else if (first_char == UTF8) {
                 continue;
             }
             else
@@ -77,6 +89,9 @@ enum file_type fileType(FILE *f) {
                 first_char = UTF8;
                 continue;
             }
+            else if (first_char == UTF8) {
+                continue;
+            }
             else
                 return DATA;
             }
@@ -90,6 +105,9 @@ enum file_type fileType(FILE *f) {
             if((bytearr[0] & 0xc0) == 0x80 && (bytearr[1] & 0xc0) == 0x80 && (bytearr[2] & 0xc0) == 0x80) {
                 if (first_char == UTF8 || first_char == UNDEFINED || first_char == ISO_8859_1 || first_char == ASCII) {
                 first_char = UTF8;
+                continue;
+            }
+            else if (first_char == UTF8) {
                 continue;
             }
             else
