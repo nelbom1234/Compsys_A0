@@ -37,7 +37,7 @@ enum file_type fileType(FILE *f) {
                 first_char = ASCII;
                 continue;
         }
-        else if(first_char == ISO_8859_1 || first_char == UTF8) {
+        else if(first_char == ISO_8859_1) {
             continue;
         }
         else
@@ -48,18 +48,12 @@ enum file_type fileType(FILE *f) {
                 first_char = ISO_8859_1;
                 continue;
             }
-            else if (first_char == UTF8) {
-                continue;
-            }
             else
                 return DATA;
         }
         else if((c & 0x80) == 0x0) {
-            if (first_char == UTF8 || first_char == UNDEFINED || first_char == ISO_8859_1 || first_char == ASCII) {
+            if (first_char == UTF8 || first_char == UNDEFINED) {
                 first_char = UTF8;
-                continue;
-            }
-            else if (first_char == UTF8) {
                 continue;
             }
             else
@@ -69,27 +63,21 @@ enum file_type fileType(FILE *f) {
             char byte;
             fread(&byte, sizeof(char), 1, f);
             if((byte & 0xc0) == 0x80) {
-                if (first_char == UTF8 || first_char == UNDEFINED || first_char == ISO_8859_1 || first_char == ASCII) {
+                if (first_char == UTF8 || first_char == UNDEFINED) {
                 first_char = UTF8;
                 continue;
-            }
-            else if (first_char == UTF8) {
-                continue;
+                }
             }
             else
                 return DATA;
-            }
         }
         else if((c & 0xf0) == 0xe0) {
             char bytearr[2];
             fread(&bytearr[0],sizeof(char),1,f);
             fread(&bytearr[1],sizeof(char),1,f);
             if((bytearr[0] & 0xc0) == 0x80 && (bytearr[1] & 0xc0) == 0x80) {
-                if (first_char == UTF8 || first_char == UNDEFINED || first_char == ISO_8859_1 || first_char == ASCII) {
+                if (first_char == UTF8 || first_char == UNDEFINED) {
                 first_char = UTF8;
-                continue;
-            }
-            else if (first_char == UTF8) {
                 continue;
             }
             else
@@ -103,11 +91,8 @@ enum file_type fileType(FILE *f) {
             fread(&bytearr[1],sizeof(char),1,f);
             fread(&bytearr[2],sizeof(char),1,f);
             if((bytearr[0] & 0xc0) == 0x80 && (bytearr[1] & 0xc0) == 0x80 && (bytearr[2] & 0xc0) == 0x80) {
-                if (first_char == UTF8 || first_char == UNDEFINED || first_char == ISO_8859_1 || first_char == ASCII) {
+                if (first_char == UTF8 || first_char == UNDEFINED) {
                 first_char = UTF8;
-                continue;
-            }
-            else if (first_char == UTF8) {
                 continue;
             }
             else
