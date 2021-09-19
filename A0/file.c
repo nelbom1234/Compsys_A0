@@ -17,9 +17,9 @@ const char * const FILE_TYPE_STRINGS[] = {
     "undefined",
     "empty",
     "data",
-    "ascii",
-    "iso-8859-1",
-    "utf8"
+    "ASCII text",
+    "ISO-8859 text",
+    "UTF-8 Unicode text"
 };
 
 enum file_type fileType(FILE *f) {
@@ -59,7 +59,7 @@ enum file_type fileType(FILE *f) {
                 fread(&bytearr[0],sizeof(char),1,f);
                 fread(&bytearr[1],sizeof(char),1,f);
                 if((bytearr[0] & 0xc0) == 0x80 && (bytearr[1] & 0xc0) == 0x80) {
-                    if (first_char == UTF8 || first_char == UNDEFINED || first_char == ASCII || first_char == ISO_8859_1) {
+                    if (first_char == UTF8 || first_char == UNDEFINED || first_char == ASCII) {
                         first_char = UTF8;
                         continue;
                     }
@@ -74,7 +74,7 @@ enum file_type fileType(FILE *f) {
                 fread(&bytearr[1],sizeof(char),1,f);
                 fread(&bytearr[2],sizeof(char),1,f);
                 if((bytearr[0] & 0xc0) == 0x80 && (bytearr[1] & 0xc0) == 0x80 && (bytearr[2] & 0xc0) == 0x80) {
-                    if (first_char == UTF8 || first_char == UNDEFINED || first_char == ASCII || first_char == ISO_8859_1) {
+                    if (first_char == UTF8 || first_char == UNDEFINED || first_char == ASCII) {
                         first_char = UTF8;
                         continue;
                     }
@@ -87,12 +87,12 @@ enum file_type fileType(FILE *f) {
                 first_char = ISO_8859_1;
                 continue;
             }
-            else if (first_char == UTF8) {
-                continue;
+            else {
+                return DATA;
             }
         }
         else if((c & 0x80) == 0x0) {
-            if (first_char == UTF8 || first_char == UNDEFINED || first_char == ASCII || first_char == ISO_8859_1) {
+            if (first_char == UTF8 || first_char == UNDEFINED || first_char == ASCII) {
                  first_char = UTF8;
                  continue;
             }
