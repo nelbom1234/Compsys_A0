@@ -20,14 +20,20 @@ printf "" > test_files/empty.input
 ##text encoding tests
 printf "\xCA\x8A\n" > test_files/utf8_2byte_test.input
 printf "\xE6\x9A\xB8\n" > test_files/utf8_3byte_test.input
-printf "\xF3\x96\xAA\x9D" > test_files/utf8_4byte_test.input
+printf "\xF3\x96\xAA\x9D\n" > test_files/utf8_4byte_test.input
 printf "\xB0\xB6\n" > test_files/ISOtest.input
-printf "\xC4\xF9" > test_files/ISOtest2.input
+printf "\xC4\xF9\n" > test_files/ISOtest2.input
+printf "\xE3\xE9\xB9\n" > test_files/ISOtest3.input
+printf "\xF5\xAC\xB3\xFA\n" > test_files/ISOtest4.input
 printf "Hello, World. \xB2\xBB\n" > test_files/ISOwithASCIItest.input
 printf "\xCA\x8A\xE6\x9A\xB8\xF3\x96\xAA\x9D\x2E\n" > test_files/utf8_allbytetypes.input
+printf "\xE6\x9A\xB8 Hello, World!\n" > test_files/utf8withASCIItest.input
+
 ##data tests
 #fails. real encoding type outside our scope
 printf "\xCA\x8A\xB0\xB6\n" > test_files/utf8andISOtest.input
+printf "\xF3\x96\xAA\x9F. Hello, World! \xA6\n" > test_files/AllEncodingstest.input
+printf "\x87\x94\x9F\n" >test_files/between127to160test.input
 
 echo "Running the tests.."
 exitcode=0

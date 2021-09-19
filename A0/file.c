@@ -39,7 +39,7 @@ enum file_type fileType(FILE *f) {
                 continue;
             }
             else if(first_char == UTF8) {
-                
+                continue;
             }
         }
         else if(c >= 160){
@@ -98,6 +98,7 @@ enum file_type fileType(FILE *f) {
             }
             return DATA;
         }
+        return DATA;
     }
     return first_char;
 }
