@@ -30,11 +30,20 @@ printf "\xCA\x8A\xE6\x9A\xB8\xF3\x96\xAA\x9D\x2E\n" > test_files/utf8_allbytetyp
 printf "\xE6\x9A\xB8 Hello, World!\n" > test_files/utf8withASCIItest.input
 
 ##data tests
-#fails. real encoding type outside our scope
-printf "\xCA\x8A\xB0\xB6\n" > test_files/utf8andISOtest.input
-printf "\xF3\x96\xAA\x9F. Hello, World! \xA6\n" > test_files/AllEncodingstest.input
-printf "\x87\x94\x9F\n" >test_files/between127to160test.input
-
+#most of these fail. real encoding type outside the scope of this assignment
+printf "\xCA\x8A\x9E\n" > test_files/utf8andISOtest.input
+printf "\xE6\x8A\xB0\xB6\n" > test_files/utf8andISOtest2.input
+printf "\xF7\xBE\x96\xAB\xB9\n" > test_files/utf8andISOtest3.input
+printf "\xC6\x97. Hello, World! \xB6\n" > test_files/AllEncodingstest.input
+printf "\xE6\x9E\xAE. Hello, World! \xBE\n" > test_files/AllEncodingstest2.input
+printf "\xF3\x96\xAA\x9F. Hello, World! \xA6\n" > test_files/AllEncodingstest3.input
+printf "\x87\x94\x9F\n" > test_files/between126to160test.input
+#This one works. seems 127 makes it data
+printf "\x7F\x9B\x8E\n" > test_files/between126to160test2.input
+printf "\x80\x8B\x93\n" > test_files/between126to160test3.input
+#twice cause it wasn't happy with only 1 byte
+printf "\x7F\x7F" > test_files/127test.input
+printf "\xC6\x97. Hello, World! \xB6\x8F\n" > test_files/allencodingsand143test.input
 echo "Running the tests.."
 exitcode=0
 for f in test_files/*.input
