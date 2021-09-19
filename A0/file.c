@@ -121,6 +121,7 @@ int main(int argc, char* argv[]) {
             return EXIT_SUCCESS;
         }
         else {
+            fclose(f);
             return print_error(argv[1], errno);
         }
     }
