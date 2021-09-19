@@ -44,6 +44,7 @@ printf "\x80\x8B\x93\n" > test_files/between126to160test3.input
 #twice cause it wasn't happy with only 1 byte
 printf "\x7F\x7F" > test_files/127test.input
 printf "\xC6\x97. Hello, World! \xB6\x8F\n" > test_files/allencodingsand143test.input
+printf "\xC6\x97. Hello, World! \xB6\x7F\n" > test_files/allencodingsand127test.input
 echo "Running the tests.."
 exitcode=0
 for f in test_files/*.input
