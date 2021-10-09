@@ -59,7 +59,7 @@ void free_binsort(struct binsort_data* data) {
 }
 
 const struct record* lookup_binsort(struct binsort_data *data, int64_t needle) {
-    int index = binsearch(data->rs, needle, 0, data->n);
+    int index = binsearch(data->rs, needle, 0, data->n-1);
     if (index == -1) {
         return NULL;
     }

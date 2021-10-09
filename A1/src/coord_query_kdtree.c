@@ -29,24 +29,99 @@ struct node {
     struct record* point;
 };
 
-struct node* kdtree(struct record* points, int depth) {
-    int axis = depth % 2;
-    int len = sizeof(points)/sizeof(points[0]);
-    if (!axis)
-        qsort(points, len, sizeof(struct record), compareLon);
-    else 
-        qsort(points,len,sizeof(struct record),compareLat);
-    
+
+struct node* kdtree(struct record* points, int depth, int n) {
+    struct node* node;
+    if (n != 0) {
+        int axis = depth % 2;
+        if (!axis)
+            qsort(points, n, sizeof(struct record), compareLon);
+        else 
+            qsort(points, n, sizeof(struct record), compareLat);
+        int medianIndex = floor((n-1)/2);
+        struct record median = points[medianIndex];
+        node = malloc(sizeof(struct node));
+        node->point = &median;
+        node->axis = axis;
+        //this approach of providing memory to each smaller array probably eats memory
+        //when going through iterations, but couldn't find a better way to slice an array
+        //struct record leftarray[medianIndex];
+        //vary the size of the right array, since it depends on whether
+        //n is even or odd, if n is even then we need to have 1 higher size 
+        //and if not then same size
+        //struct record rightarray[medianIndex+1-(n % 2)];
+        // for (int i = 0; i < n; i++) {
+        //     if (i < medianIndex) {
+        //         leftarray[i] = points[i];
+        //     }
+        //     else if (i > medianIndex) {
+        //         rightarray[i-medianIndex-1] = points[i];
+        //     }
+        // }
+        node->left = kdtree(points,depth+1, medianIndex);
+        node->right = kdtree(points+(medianIndex+1),depth+1,medianIndex + 1 - (n % 2));
+    }
+    return node;
 } 
 
 void free_kdtree(struct node* node) {
     struct node* node_left = node->left;
     struct node* node_right = node->right;
-    free(node);
     if (node_left != NULL) {
         free_kdtree(node_left);
     }
     if (node_right != NULL) {
         free_kdtree(node_right);
     }
+    free(node);
+}
+
+
+void search_kdtree(struct record* closest, double *query, struct node *node) {
+    if (node == NULL) {
+        return;
+    }
+    double closestDist = sqrt(pow(closest->lon-query[0],2.0)+pow(closest->lat-query[1],2.0));
+    double nodeDist = sqrt(pow(node->point->lon-query[0],2.0)+pow(node->point->lat-query[1],2.0));
+    printf("lon: %f, lat: %f, dist: %f\n", node->point->lon, node->point->lat, nodeDist);
+    
+    if (nodeDist < closestDist) {
+        closest = node->point;
+    }
+    double diff;
+    if (node->axis == 0) {
+        diff = node->point->lon-query[0];
+    }
+    else
+        diff = node->point->lat-query[1];
+    
+    //radius from the pseudo-code has already been calculated as nodeDist
+    if (diff >= 0 || nodeDist > fabs(diff)) {
+        search_kdtree(closest, query, node->left);
+    }
+    if (diff <= 0 || nodeDist > fabs(diff)) {
+        search_kdtree(closest, query, node->right);
+    }
+}
+
+//so we have a function that actually works with coord_query.c usage
+struct node* mk_kdtree(struct record* points, int n) {
+    return kdtree(points, 0, n);
+}
+
+//same comment as mk_kdtree
+const struct record* lookup_kdtree(struct node *node, double lon, double lat) {
+    double query[2];
+    query[0] = lon;
+    query[1] = lat;
+    struct record closest = *(node->point);
+    search_kdtree(&closest, query, node);
+    return &closest;
+}
+
+int main(int argc, char** argv) {
+  return coord_query_loop(argc, argv,
+                          (mk_index_fn)mk_kdtree,
+                          (free_index_fn)free_kdtree,
+                          (lookup_fn)lookup_kdtree);
 }
