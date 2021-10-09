@@ -16,10 +16,8 @@ struct naive_data {
 
 struct naive_data* mk_naive(struct record* rs, int n) {
   struct naive_data* data = malloc(sizeof(rs)+sizeof(n));
-  for (int i = 0; i < n; i++) {
-    data->rs[n] = rs[n];
-    data->n = n;
-  }
+  data->rs = rs;
+  data->n = n;
   return data;
 
 }
@@ -31,8 +29,8 @@ void free_naive(struct naive_data* data) {
 const struct record* lookup_naive(struct naive_data *data, int64_t needle) {
   int len = data->n;
   for (int i = 0; i < len-1; i++) {
-    if (data->rs[i]->osm_id == needle) {
-      return data->rs;
+    if (data->rs[i].osm_id == needle) {
+      return &data->rs[i];
     }
   }
   return NULL;
