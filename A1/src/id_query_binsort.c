@@ -5,8 +5,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <assert.h>
-#include<math.h>
-#include<inttypes.h>
+#include <math.h>
 
 #include "record.h"
 #include "id_query.h"
