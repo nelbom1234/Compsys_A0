@@ -4,8 +4,22 @@
 #include <pthread.h>
 
 struct job_queue {
-  int capacity, size, front, rear;
+  //conditions to make methods get blocked under certain conditions
+  pthread_cond_t cond_destroy;
+  pthread_cond_t cond_push;
+  pthread_cond_t cond_pop;
+
+  //mutex to hold methods locked while they should sleep
+  pthread_mutex_t mutex_destroy;
+  pthread_mutex_t mutex_push;
+  pthread_mutex_t mutex_pop;
+
+  //mutex to lock other threads out in critical sections
+  pthread_mutex_t mutex_general;
+
+  int capacity, size, front;
   void *data[];
+
 };
 
 // Initialise a job queue with the given capacity.  The queue starts out

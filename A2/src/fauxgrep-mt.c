@@ -69,7 +69,7 @@ int main(int argc, char * const *argv) {
   }
 
   int num_threads = 1;
-  char const *needle = argv[1];
+  char *needle = argv[1];
   char * const *paths = &argv[2];
 
 
@@ -127,7 +127,7 @@ int main(int argc, char * const *argv) {
       break;
     case FTS_F:
       // Process the file p->fts_path, somehow.
-      job_queue_push(&jq, (void*)strdup(p));
+      job_queue_push(&jq, (void*)strdup(p->fts_path));
       break;
     default:
       break;
