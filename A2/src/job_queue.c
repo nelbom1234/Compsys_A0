@@ -20,7 +20,7 @@ int job_queue_init(struct job_queue *job_queue, int capacity) {
   pthread_mutex_init(&job_queue->mutex_general, NULL);
   job_queue->capacity = capacity;
   job_queue->size = 0;
-  job_queue->data[0] = calloc(job_queue->capacity,sizeof(void*));
+  job_queue->data = malloc(sizeof(void*)*job_queue->capacity);
   // for (int i = 0; i < capacity; i++) {
   //   job_queue->data[i] = malloc(sizeof(void*));
   // }
@@ -33,15 +33,11 @@ int job_queue_destroy(struct job_queue *job_queue) {
   while (job_queue->size > 0) {
     pthread_cond_wait(&job_queue->cond_destroy, &job_queue->mutex_general);
   }
-  //prevent job_queue_push from running until we have destroyed the queue
-  //so we don't get added jobs in the middle
-  //free(job_queue->data);
-  // for (int i = job_queue->capacity; i > -1; i--) {
-  //   free(job_queue->data[i]);
-  // }
   free(job_queue->data);
-  free(job_queue);
+  //free(job_queue);
   pthread_mutex_unlock(&job_queue->mutex_general);
+  //wake all job_queue_pop threads that are sleeping, so they can
+  //return -1 and terminate
   pthread_cond_broadcast(&job_queue->cond_pop);
   return 0;
 }
@@ -52,17 +48,18 @@ int job_queue_push(struct job_queue *job_queue, void *data) {
     pthread_cond_wait(&job_queue->cond_push,&job_queue->mutex_general);
   }
   pthread_mutex_unlock(&job_queue->mutex_general);
+  // if thread has already been destroyed
   if (job_queue == NULL) {
     return -1;
   }
   //prevent another thread from running until the element is added,
   //since this is a critical section
 
-  // if thread has already been destroyed
   pthread_mutex_lock(&job_queue->mutex_general);
   job_queue->data[job_queue->front+job_queue->size] = data;
   job_queue->size++;
   pthread_mutex_unlock(&job_queue->mutex_general);
+  //wake a sleeping pop thread as there is now an element it can pop
   pthread_cond_signal(&job_queue->cond_pop);
   
  return 0;
@@ -75,19 +72,23 @@ int job_queue_pop(struct job_queue *job_queue, void **data) {
     pthread_cond_wait(&job_queue->cond_pop, &job_queue->mutex_general);
   }
   pthread_mutex_unlock(&job_queue->mutex_general);
+  //if thread has already been destroyed
   if (job_queue == NULL) {
     return -1;
   }
   pthread_mutex_lock(&job_queue->mutex_general);
-  //if thread has already been destroyed
   *data = job_queue->data[job_queue->front];
-  job_queue->data[job_queue->front] = NULL;
   job_queue->front = (job_queue->front + 1) % job_queue->capacity;
   job_queue->size--;
   pthread_mutex_unlock(&job_queue->mutex_general);
   if (job_queue->size == 0) {
+    //if size is 0, wake the destroy thread if there is one since
+    //we can now complete destroying the queue
     pthread_cond_signal(&job_queue->cond_destroy);
   }
+  //wake a sleeping push thread 
+  //if we are not destroying the queue since there will now be 
+  //an available slot to push to
   else pthread_cond_signal(&job_queue->cond_push);
   return 0;
 

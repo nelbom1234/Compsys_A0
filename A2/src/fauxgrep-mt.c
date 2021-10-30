@@ -51,7 +51,7 @@ int fauxgrep_file(char const *needle, char const *path) {
   return 0;
 }
 
-void * worker(void *arg) {
+void *worker(void *arg) {
   struct job_queue *jq = arg;
 
   while(1) {
@@ -59,7 +59,11 @@ void * worker(void *arg) {
     if (job_queue_pop(jq, (void**)&line) == 0) {
       fauxgrep_file(NEEDLE, line);
     }
+    else {
+      break;
+    }
   }
+  return NULL;
 }
 
 int main(int argc, char * const *argv) {
