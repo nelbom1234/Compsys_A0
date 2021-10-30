@@ -69,7 +69,7 @@ int main(int argc, char * const *argv) {
   }
 
   int num_threads = 1;
-  char *needle = argv[1];
+  char const *needle = argv[1];
   char * const *paths = &argv[2];
 
 
