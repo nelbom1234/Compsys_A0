@@ -79,6 +79,7 @@ int job_queue_pop(struct job_queue *job_queue, void **data) {
   }
   pthread_mutex_lock(&job_queue->mutex_general);
   *data = job_queue->data[job_queue->front];
+  job_queue->data[job_queue->front] = NULL;
   job_queue->front = (job_queue->front + 1) % job_queue->capacity;
   job_queue->size--;
   pthread_mutex_unlock(&job_queue->mutex_general);
