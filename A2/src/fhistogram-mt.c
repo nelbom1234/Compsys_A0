@@ -58,7 +58,6 @@ int fhistogram(char const *path) {
 void *worker(void *arg) {
   struct job_queue *jq = arg;
   
-  printf("starting worker\n");
   while(1) {
     char* path;
     job_queue_pop(jq, (void**)&path);
@@ -67,7 +66,6 @@ void *worker(void *arg) {
       free(path);
     }
     else {
-      printf("exiting worker\n");
       return NULL;
     }
   }

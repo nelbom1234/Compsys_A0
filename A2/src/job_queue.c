@@ -10,20 +10,12 @@ int job_queue_init(struct job_queue *job_queue, int capacity) {
   pthread_cond_init(&job_queue->cond_push, NULL);
   pthread_cond_init(&job_queue->cond_pop, NULL);
 
-  //mutex to lock other threads running the function from modifying
-  //important values mid calculation
-  // pthread_mutex_init(&job_queue->mutex_destroy, NULL);
-  // pthread_mutex_init(&job_queue->mutex_push, NULL);
-  // pthread_mutex_init(&job_queue->mutex_pop, NULL);
   //mutex to lock other threads from modifying important values 
   //that we need to check if we should sleep or not
   pthread_mutex_init(&job_queue->mutex_general, NULL);
   job_queue->capacity = capacity;
   job_queue->size = 0;
   job_queue->data = malloc(sizeof(void*)*job_queue->capacity);
-  // for (int i = 0; i < capacity; i++) {
-  //   job_queue->data[i] = malloc(sizeof(void*));
-  // }
   job_queue->front = 0;
   return 0;
 }
@@ -54,8 +46,7 @@ int job_queue_push(struct job_queue *job_queue, void *data) {
     return -1;
   }
   //prevent another thread from running until the element is added,
-  //since this is a critical section
-
+  //and values changed, since this is a critical section
   pthread_mutex_lock(&job_queue->mutex_general);
   job_queue->data[job_queue->front+job_queue->size] = data;
   job_queue->size++;

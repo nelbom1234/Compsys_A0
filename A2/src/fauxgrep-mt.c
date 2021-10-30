@@ -53,7 +53,6 @@ int fauxgrep_file(char const *needle, char const *path) {
 
 void *worker(void *arg) {
   struct job_queue *jq = arg;
-  printf("starting worker\n");
   while(1) {
     char *line;
     job_queue_pop(jq, (void**)&line);
@@ -61,7 +60,6 @@ void *worker(void *arg) {
       fauxgrep_file(NEEDLE, line);
     }
     else {
-      printf("exiting worker\n");
       return NULL;
     }
   }
