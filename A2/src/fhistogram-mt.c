@@ -42,15 +42,21 @@ int fhistogram(char const *path) {
     i++;
     update_histogram(local_histogram, c);
     if ((i % 100000) == 0) {
+      pthread_mutex_lock(&stdout_mutex);
       merge_histogram(local_histogram, global_histogram);
       print_histogram(global_histogram);
+      pthread_mutex_unlock(&stdout_mutex);
     }
   }
 
   fclose(f);
 
+  //lock with mutex when merging and printing so values aren't changed
+  //while we are accessing them
+  pthread_mutex_lock(&stdout_mutex);
   merge_histogram(local_histogram, global_histogram);
   print_histogram(global_histogram);
+  pthread_mutex_unlock(&stdout_mutex);
 
   return 0;
 }
