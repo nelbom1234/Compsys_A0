@@ -53,17 +53,18 @@ int fauxgrep_file(char const *needle, char const *path) {
 
 void *worker(void *arg) {
   struct job_queue *jq = arg;
-
+  printf("starting worker\n");
   while(1) {
     char *line;
-    if (job_queue_pop(jq, (void**)&line) == 0) {
+    job_queue_pop(jq, (void**)&line);
+    if (line != NULL) {
       fauxgrep_file(NEEDLE, line);
     }
     else {
-      break;
+      printf("exiting worker\n");
+      return NULL;
     }
   }
-  return NULL;
 }
 
 int main(int argc, char * const *argv) {
@@ -98,12 +99,12 @@ int main(int argc, char * const *argv) {
     paths = &argv[2];
   }
 
-  //initialize the needle as a global variable so
+  //initialize the needle as a global value
   //so our worker threads can access it
   NEEDLE = needle;
   // Initialise the job queue and some worker threads here.
   struct job_queue jq;
-  job_queue_init(&jq, 64); //why 64? no idea, go on
+  job_queue_init(&jq, 64);
   pthread_t *threads = calloc(num_threads, sizeof(pthread_t));
   for (int i = 0; i < num_threads; i++) {
     if (pthread_create(&threads[i], NULL, &worker, &jq) != 0) {

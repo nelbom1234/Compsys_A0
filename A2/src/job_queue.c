@@ -36,9 +36,10 @@ int job_queue_destroy(struct job_queue *job_queue) {
   free(job_queue->data);
   //free(job_queue);
   pthread_mutex_unlock(&job_queue->mutex_general);
-  //wake all job_queue_pop threads that are sleeping, so they can
+  //wake all pop and push threads that are sleeping, so they can
   //return -1 and terminate
   pthread_cond_broadcast(&job_queue->cond_pop);
+  pthread_cond_broadcast(&job_queue->cond_push);
   return 0;
 }
 
@@ -49,7 +50,7 @@ int job_queue_push(struct job_queue *job_queue, void *data) {
   }
   pthread_mutex_unlock(&job_queue->mutex_general);
   // if thread has already been destroyed
-  if (job_queue == NULL) {
+  if (job_queue->data == NULL) {
     return -1;
   }
   //prevent another thread from running until the element is added,
@@ -73,7 +74,7 @@ int job_queue_pop(struct job_queue *job_queue, void **data) {
   }
   pthread_mutex_unlock(&job_queue->mutex_general);
   //if thread has already been destroyed
-  if (job_queue == NULL) {
+  if (job_queue->data == NULL) {
     return -1;
   }
   pthread_mutex_lock(&job_queue->mutex_general);
