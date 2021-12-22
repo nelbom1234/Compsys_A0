@@ -12,10 +12,10 @@ set -e
 make
 
 # The command with which you run PRUN: You should likely change this variable
-PRUN=prun
+PRUN=~/Documents/compsys/x86prime-master/_build/default/bin/prun.exe
 
 # The command with which you run PRASM: You should likely change this variable
-PRASM=prasm
+PRASM=~/Documents/compsys/x86prime-master/_build/default/bin/prasm.exe
 
 TESTLOC=tests
 TESTDIR=test_runs
@@ -26,7 +26,7 @@ if [[ ! -d "${TESTLOC}" ]] ; then
 fi
 
 echo ">> I will now test all *.prime files in ${TESTLOC}/"
-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
+
 echo "Generating a test_runs directory.."
 mkdir -p $TESTDIR
 rm -f $TESTDIR/*

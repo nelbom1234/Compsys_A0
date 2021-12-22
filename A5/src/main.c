@@ -129,8 +129,8 @@ int main(int argc, char* argv[]) {
         //with the constraints given we are left with using use_if to return the byte size for that insn
         //the rest will return 0 and thus when all added together we have the insn size
 
-        //in hindsight, since many different insns are same byte length we could have made us of
-        // || to cut down on some lines, but the implementation should still work
+        //in hindsight, since many different insns are same byte length we could have made use of ||
+        //to cut down on some lines, but the implementation should still work
         val ins_size = add(add(add(add(add(add(add(add(add(add(add(add(
             use_if(is_return_or_stop, from_int(2)), 
             use_if(is_reg_arithmetic, from_int(2))), 
@@ -159,9 +159,11 @@ int main(int argc, char* argv[]) {
         bool imm_p_pos6 = is_imm_cbranch; /* all other at position 2 */
 
         // unimplemented control signals:
-        bool is_load  = false; // TODO 2021: Detect when we're executing a load
-        bool is_store = false; // TODO 2021: Detect when we're executing a store
-        bool is_conditional = false; // TODO 2021: Detect if we are executing a conditional flow change
+        //adding is_jump as we had no other bool determing it and it comes in handy for is_conditional
+        bool is_jump = is_cflow && is(JMP, minor_op);
+        bool is_load  = (is_reg_movq_mem && is(RETURN, minor_op)) || (is_imm_movq_mem && is(0x5, minor_op)); // TODO 2021: Detect when we're executing a load
+        bool is_store = (is_reg_movq_mem && is(0x9, minor_op)) || (is_imm_movq_mem && is(0xD, minor_op)); // TODO 2021: Detect when we're executing a store
+        bool is_conditional = (is_cflow && bool_not(is_call) && bool_not(is_jump)) || is_imm_cbranch; // TODO 2021: Detect if we are executing a conditional flow change
 
         // TODO 2021: Add additional control signals you may need below....
 
