@@ -1,0 +1,7 @@
+test:
+    movq $0, %rax
+    movq $3, %rdx
+loop:
+    addq $1, %rax
+    cbl %rax, %rdx, loop
+    stop

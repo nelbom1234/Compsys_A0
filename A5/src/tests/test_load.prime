@@ -1,0 +1,3 @@
+test:
+    movq (%r11), %rdx
+    movq 3(%r11), %rax

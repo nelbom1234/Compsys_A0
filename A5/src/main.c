@@ -108,17 +108,17 @@ int main(int argc, char* argv[]) {
 
         // decode instruction type from major operation code
         bool is_return_or_stop = is(RETURN_STOP, major_op);
-        bool is_reg_arithmetic = is(REG_ARITHMETIC, major_op);
-        bool is_imm_arithmetic = is(IMM_ARITHMETIC, major_op);
-        bool is_reg_movq = is(REG_MOVQ, major_op);
-        bool is_imm_movq = is(IMM_MOVQ, major_op);
+        bool is_reg_arithmetic = is(REG_ARITHMETIC, major_op); 
+        bool is_imm_arithmetic = is(IMM_ARITHMETIC, major_op); 
+        bool is_reg_movq = is(REG_MOVQ, major_op); 
+        bool is_imm_movq = is(IMM_MOVQ, major_op); 
         bool is_reg_movq_mem = is(REG_MOVQ_MEM, major_op);
         bool is_imm_movq_mem = is(IMM_MOVQ_MEM, major_op);
         bool is_cflow = is(CFLOW, major_op); /* note that this signal does not include return - though logically it could */
-        bool is_leaq2  = is(LEAQ2, major_op);
+        bool is_leaq2  = is(LEAQ2, major_op); 
         bool is_leaq3  = is(LEAQ3, major_op);
         bool is_leaq6  = is(LEAQ6, major_op);
-        bool is_leaq7  = is(LEAQ7, major_op);
+        bool is_leaq7  = is(LEAQ7, major_op); 
         bool is_imm_cbranch = is(IMM_CBRANCH, major_op);
 
         // Right now, we can only execute instructions with a size of 2.

@@ -1,0 +1,6 @@
+1 0
+2 6
+3 c
+4 12
+ -- value mismatch, access 'P' 0
+ -- with value 18, but tracefile expected c

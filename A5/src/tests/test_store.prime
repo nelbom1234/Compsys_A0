@@ -1,0 +1,5 @@
+test:
+    movq $2, %rdx
+    movq $5, %rax
+    movq %rdx, (%r11)
+    movq %rax, 2(%r12)

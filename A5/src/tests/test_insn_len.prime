@@ -1,0 +1,17 @@
+test:
+    movq $0, %rax
+    movq $3, %rdx
+    movq %rdx, %rax
+    leaq(%rsi, %rax, 8), %r11
+    addq %rax, %rdx
+    subq $1, %rax
+    movq (%r11), %rbp
+    movq 2(%rbp), %rax
+    leaq (%r13), %rax
+    leaq 7, %r14
+    leaq 3(,%rsp,8), %r15
+    movq $0, %rax
+    movq $0, %rdx
+    cbne %rax, %rdx, test
+    cbne $0, %rax, test
+    stop
