@@ -1,0 +1,17 @@
+00000000 :                       #  main:
+00000000 :                       #  .LFB0:
+00000000 : 517008000000          #      subq $8, %rsp
+00000006 : 39B7                  #      movq %r11, (%rsp)
+NOT PRIME:                       #      ERROR - no prime for this --->      	# 	endbr64                                
+00000008 : 517008000000          #      subq $8, %rsp
+0000000e : A460????????          #      leaq .LC0, %rdi
+00000014 : 640000000000          #      movq $0, %eax
+NOT PRIME:                       #      ERROR - no prime for this --->      	#  malformed: 	call	printf@PLT            
+0000001a : 640000000000          #      movq $0, %eax
+00000020 : 507008000000          #      addq $8, %rsp
+00000026 : 31B7                  #      movq (%rsp), %r11
+00000028 : 507008000000          #      addq $8, %rsp
+0000002e : 010B                  #      ret %r11
+00000030 :                       #      .align 8
+00000030 :                       #      .align 8
+00000030 :                       #      .align 8
